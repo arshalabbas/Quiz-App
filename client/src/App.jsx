@@ -5,11 +5,12 @@ import Layout from "./layout";
 import Error from "./Error";
 
 //Routes components
-import { Root, Host } from "./routes";
+import { Root, Host, Quiz } from "./routes";
 
 const router = createBrowserRouter([
   { path: "/", element: <Root />, errorElement: <Error /> },
   { path: "/host", element: <Host /> },
+  { path: "/quiz", element: <Quiz /> },
 ]);
 
 const App = () => {

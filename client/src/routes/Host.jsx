@@ -1,60 +1,31 @@
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { PlayerCard } from "../components";
+import socket from "../socket/socket";
 
 const Host = () => {
   const url = window.location.hostname;
-  const dummyUsers = [
-    {
-      name: "Arshal",
-      avatar: "https://placekitten.com/g/200/200",
-    },
-    {
-      name: "Navaneeth",
-      avatar: "https://placekitten.com/g/200/200",
-    },
-    {
-      name: "Athul",
-      avatar: "https://placekitten.com/g/200/200",
-    },
-    {
-      name: "Sunny",
-      avatar: "https://placekitten.com/g/200/200",
-    },
-  ];
-  const [participants, setParticipants] = useState(dummyUsers);
+  const [players, setPlayers] = useState([]);
 
   useEffect(() => {
-    const canvas = document.querySelector("canvas");
-    const c = canvas.getContext("2d");
+    socket.emit("get-players", (data) => {
+      // console.log(data && players.length !== 0);
+      if (data && players.length !== 0) setPlayers(data);
+    });
+    socket.on("player-joined", (data) => {
+      setPlayers((prev) => [...prev, data]);
+    });
 
-    function animate() {
-      //   requestAnimationFrame(animate);
-      c.clearRect(0, 0, canvas.width, canvas.height);
-      participants.forEach((user) => {
-        c.fillText(
-          user.name,
-          Math.random() * canvas.width,
-          Math.random() * canvas.height
-        );
-      });
-    }
-    animate();
-    return () => {};
-  }, []);
+    socket.on("player-removed", (data) => {
+      console.log(data);
+      setPlayers(data);
+    });
 
-  useEffect(() => {
-    setInterval(() => {
-      setParticipants(
-        (prev) =>
-          (prev = [
-            ...prev,
-            {
-              name: (Math.random() * 1000).toString(),
-              avatar: "https://placekitten.com/g/200/200",
-            },
-          ])
-      );
-    }, 2000);
+    return () => {
+      socket.off("player-joined");
+      socket.off("get-players");
+      socket.off("player-removed");
+    };
   }, []);
 
   return (
@@ -71,7 +42,10 @@ const Host = () => {
             Participants
           </h2>
           <div className="flex-1">
-            <canvas id="participants"></canvas>
+            {players &&
+              players.map((player) => (
+                <PlayerCard avatar={player.avatar} name={player.name} />
+              ))}
           </div>
         </div>
       </div>

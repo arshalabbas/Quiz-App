@@ -1,16 +1,37 @@
 //Components
 import { useEffect, useState } from "react";
 import { Input } from "../components";
-import { joinPlayer } from "../socket/emitEvents";
+import socket from "../socket/socket";
+import { useNavigate } from "react-router-dom";
 
 const Root = () => {
   const [name, setName] = useState("");
   const [institution, setInstitution] = useState("");
   const [course, setCourse] = useState("");
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      socket.off("join-player");
+    };
+  }, []);
+
   const submitHandler = (e) => {
     e.preventDefault();
-    joinPlayer({ name, institution, course });
+    const playerData = {
+      id: socket.id,
+      name,
+      avatar: `https://robohash.org/${socket.id}?size=80x80`,
+      institution,
+      course,
+    };
+    socket.emit("join-player", playerData, (res) => {
+      if (!res) return alert("failed to join the quiz");
+      navigate("/quiz", {
+        state: playerData,
+      });
+    });
   };
 
   return (
