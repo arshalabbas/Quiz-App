@@ -1,5 +1,5 @@
 /* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Biryani:wght@400;600;700&family=Rubik+Mono+One&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Biryani:wght@400;600;700&family=Rubik+Mono+One&display=swap");
 
 /* TailwindCSS */
 @tailwind base;
@@ -9,7 +9,7 @@
 @layer base {
   .gradient_bg {
     height: fit-content;
-    z-index: 3;
+    z-index: -1;
     width: 100%;
     max-width: 640px;
     background-image: radial-gradient(
@@ -31,10 +31,50 @@
     top: 80px;
     opacity: 0.15;
   }
+
+  .reveal {
+    opacity: 0;
+    transition: all 1s;
+  }
+  .from-t {
+    transform: translateY(-100%);
+  }
+  .from-l {
+    transform: translateX(-100%);
+  }
+  .from-r {
+    transform: translateX(100%);
+  }
+  .from-b {
+    transform: translateY(100%);
+  }
+  .revealed {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+    transform: translateY(0);
+  }
+
+  .q_number {
+    @apply text-9xl;
+    transform: translateY(180%);
+    animation: q_number_animation 1s ease-in-out 0.5s forwards;
+  }
+
+  @keyframes q_number_animation {
+    from {
+      @apply text-9xl;
+      transform: translateY(180%);
+    }
+    to {
+      @apply text-5xl;
+      transform: translateY(0%);
+    }
+  }
 }
 
 @layer utilities {
   .flex_center {
-    @apply flex justify-center items-center
+    @apply flex justify-center items-center;
   }
 }

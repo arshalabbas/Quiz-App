@@ -3,6 +3,7 @@ const {
   removePlayer,
   getAllPlayers,
 } = require("../handlers/playersHandler");
+const { getQuestion } = require("../handlers/questionsHandlers");
 
 const eventHandler = (socket) => {
   socket.on("join-player", (data, cb) => {
@@ -22,6 +23,17 @@ const eventHandler = (socket) => {
     const player = removePlayer(socket.id);
     //event
     socket.broadcast.emit("player-removed", getAllPlayers());
+  });
+
+  socket.on("started", () => {
+    //event
+    socket.broadcast.emit("started-response");
+  });
+
+  //Question Events
+  socket.on("get-question", (cb) => {
+    const currentQuestion = getQuestion();
+    cb(currentQuestion);
   });
 };
 
